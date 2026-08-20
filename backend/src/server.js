@@ -65,8 +65,17 @@ app.get('/health', (req, res) => {
 app.use('/api', secretRoutes);
 
 // Static frontend serving in production
-const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-if (fs.existsSync(frontendDist)) {
+const possiblePaths = [
+  path.resolve(__dirname, '../../frontend/dist'),
+  path.resolve(__dirname, '../frontend/dist'),
+  path.resolve(process.cwd(), '../frontend/dist'),
+  path.resolve(process.cwd(), 'frontend/dist'),
+  path.resolve(process.cwd(), 'dist'),
+];
+const frontendDist = possiblePaths.find((p) => fs.existsSync(p));
+
+if (frontendDist) {
+  console.log(`[Static] Serving frontend from: ${frontendDist}`);
   app.use(express.static(frontendDist));
   app.get('*', (req, res) => {
     res.sendFile(path.join(frontendDist, 'index.html'));
