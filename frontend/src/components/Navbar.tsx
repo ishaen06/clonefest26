@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  ShieldCheck,
   PlusCircle,
   EyeOff,
   Zap,
@@ -126,12 +125,6 @@ export const Navbar: React.FC = () => {
                 Esc
               </kbd>
             </button>
-
-            {/* Zero Knowledge Security Status Indicator */}
-            <div className="nav-zk hidden lg:flex items-center space-x-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Zero-Knowledge</span>
-            </div>
 
             {/* Mobile Hamburger Toggle */}
             <button
