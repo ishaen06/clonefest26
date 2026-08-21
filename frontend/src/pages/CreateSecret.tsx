@@ -215,6 +215,13 @@ export const CreateSecret: React.FC = () => {
 
       const managementUrl = `${origin}/manage/${res.secretId}#token=${res.managementToken}`;
 
+      try {
+        sessionStorage.setItem('jigsaw_last_secret', JSON.stringify({
+          secretId: res.secretId,
+          managementToken: res.managementToken,
+          createdAt: new Date().toISOString(),
+        }));
+      } catch (_) {}
       setCreatedResult({
         secretId: res.secretId,
         keyHex: rawKeyHex,
