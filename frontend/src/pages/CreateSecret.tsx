@@ -639,18 +639,18 @@ export const CreateSecret: React.FC = () => {
 
         {/* Shamir Settings Panel */}
         {format === 'shamir' && (
-          <div className="mt-4 p-5 rounded-2xl bg-purple-950/20 border border-purple-800/40 space-y-4 font-mono text-xs">
+          <div className="shamir-card mt-4 p-5 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-4 font-mono text-xs shadow-sm">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center space-x-2 text-purple-300 font-semibold text-sm">
                 <Users className="w-4 h-4 text-purple-400" />
-                <span>Shamir's Multi-Party Quorum ($K$-of-$N$)</span>
+                <span>Shamir's Multi-Party Quorum (K-of-N)</span>
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] border border-purple-500/30 font-bold">
                 Jigsaw Flagship Protocol
               </span>
             </div>
             <p className="text-zinc-400 text-[11px] leading-relaxed">
-              Splits the 256-bit encryption key into $N$ independent cryptographic shares using polynomial interpolation over $GF(2^8)$. No single trustee holds the master key. The secret can only be reconstructed when at least <strong className="text-purple-300">{shamirThreshold}</strong> trustees assemble their shares.
+              Splits the 256-bit encryption key into N independent cryptographic shares using polynomial interpolation over GF(2^8). No single trustee holds the master key. The secret can only be reconstructed when at least <strong className="text-purple-300">{shamirThreshold}</strong> trustees assemble their shares.
             </p>
 
             {/* Quick Presets */}
@@ -690,7 +690,7 @@ export const CreateSecret: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-purple-900/40">
               <div>
                 <label className="block text-zinc-400 text-[11px] mb-1">
-                  Required Threshold ($K$ shares to unlock):
+                  Required Threshold (K shares to unlock):
                 </label>
                 <input
                   type="number"
@@ -703,7 +703,7 @@ export const CreateSecret: React.FC = () => {
               </div>
               <div>
                 <label className="block text-zinc-400 text-[11px] mb-1">
-                  Total Trustee Shares ($N$ shares generated):
+                  Total Trustee Shares (N shares generated):
                 </label>
                 <input
                   type="number"

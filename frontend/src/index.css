@@ -629,3 +629,80 @@ h1, h2, h3, h4, h5, h6,
   color: #268bd2;
 }
 
+
+
+/* =========================================================================
+   PROTECT CODE IDE WORKSTATION FROM THEME INHERITANCE
+   ========================================================================= */
+.code-ide-container {
+  background-color: #090d16 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #1e293b !important;
+}
+
+.code-ide-container .code-ide-titlebar {
+  background-color: #0d1117 !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+.code-ide-container .code-ide-gutter {
+  background-color: #111827 !important;
+  border-right: 1px solid #1e293b !important;
+  color: #64748b !important;
+}
+
+.code-ide-container .code-ide-textarea {
+  background-color: #090d16 !important;
+  color: #e2e8f0 !important;
+  caret-color: #38bdf8 !important;
+}
+
+.code-ide-container .code-ide-statusbar {
+  background-color: #0d1117 !important;
+  border-top: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+.code-ide-container button,
+.code-ide-container select {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* Light Theme Card & Text Polish */
+body.theme-bootstrap .shamir-card {
+  background-color: #f5f3ff !important;
+  border: 1px solid #c4b5fd !important;
+  color: #1e1b4b !important;
+}
+
+body.theme-bootstrap .shamir-card h3,
+body.theme-bootstrap .shamir-card h4,
+body.theme-bootstrap .shamir-card strong {
+  color: #5b21b6 !important;
+}
+
+body.theme-bootstrap .shamir-card p,
+body.theme-bootstrap .shamir-card label {
+  color: #4338ca !important;
+}
+
+body.theme-bootstrap .nav-why-us {
+  background-color: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+body.theme-bootstrap .nav-panic {
+  background-color: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  color: #b91c1c !important;
+}
+
+body.theme-bootstrap .nav-zk {
+  background-color: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #15803d !important;
+}

@@ -160,7 +160,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
 
   return (
     <div
-      className={`rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden font-mono flex flex-col transition-all duration-300 ${
+      className={`code-ide-container rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden font-mono flex flex-col transition-all duration-300 ${
         isFullscreen ? 'fixed inset-4 z-50 bg-zinc-950/95 backdrop-blur-xl' : 'relative w-full'
       }`}
       style={{ backgroundColor: theme.bg }}
@@ -168,7 +168,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
       aria-label="Code IDE Editor"
     >
       {/* TITLEBAR */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 bg-zinc-950/90 border-b border-zinc-800/80 flex-wrap gap-2 text-xs select-none">
+      <div className="code-ide-titlebar flex items-center justify-between px-3 sm:px-4 py-2.5 bg-zinc-950/90 border-b border-zinc-800/80 flex-wrap gap-2 text-xs select-none">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="flex space-x-1.5 pr-2 border-r border-zinc-800">
             <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500/80" />
@@ -270,7 +270,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
         <div
           ref={gutterRef}
           aria-hidden="true"
-          className="select-none py-3 px-2.5 sm:px-3 text-right text-xs border-r border-zinc-800/80 overflow-hidden flex-shrink-0"
+          className="code-ide-gutter select-none py-3 px-2.5 sm:px-3 text-right text-xs border-r border-zinc-800/80 overflow-hidden flex-shrink-0"
           style={{ backgroundColor: theme.gutter, minWidth: '3rem', lineHeight: '1.5rem' }}
         >
           {lines.map((_, i) => (
@@ -301,7 +301,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
               autoComplete="off"
               autoCorrect="off"
               aria-label="Code source editor"
-              className="w-full h-full p-3 focus:outline-none resize-none whitespace-pre overflow-auto placeholder-zinc-600 text-xs sm:text-xs"
+              className="code-ide-textarea w-full h-full p-3 focus:outline-none resize-none whitespace-pre overflow-auto placeholder-zinc-600 text-xs sm:text-xs"
               style={{
                 backgroundColor: theme.bg,
                 color: theme.text,
@@ -339,7 +339,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
       </div>
 
       {/* STATUS BAR */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-1.5 bg-zinc-950 border-t border-zinc-800 text-[11px] text-zinc-400 select-none flex-wrap gap-1">
+      <div className="code-ide-statusbar flex items-center justify-between px-3 sm:px-4 py-1.5 bg-zinc-950 border-t border-zinc-800 text-[11px] text-zinc-400 select-none flex-wrap gap-1">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <span className="flex items-center space-x-1 font-semibold text-zinc-300">
             <Terminal className="w-3 h-3 text-blue-400" />

@@ -96,7 +96,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setShowWhyUsModal(true)}
               aria-label="Why JigsawBin vs PrivateBin comparison"
-              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 border border-blue-500/40 text-blue-300 text-xs font-mono transition"
+              className="nav-why-us flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/40 text-blue-400 text-xs font-mono transition font-bold"
               title="Why JigsawBin vs PrivateBin"
             >
               <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
@@ -120,7 +120,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setPanicActive(true)}
               aria-label="Activate panic mask emergency decoy"
               title="Activate Panic Mask (Esc)"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-400 text-xs font-mono transition"
+              className="nav-panic flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500/25 border border-red-500/40 text-red-400 text-xs font-mono transition font-semibold"
             >
               <EyeOff className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t.panic_mask || 'Panic'}</span>
@@ -130,7 +130,7 @@ export const Navbar: React.FC = () => {
             </button>
 
             {/* Zero Knowledge Security Status Indicator */}
-            <div className="hidden lg:flex items-center space-x-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="nav-zk hidden lg:flex items-center space-x-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Zero-Knowledge</span>
             </div>
