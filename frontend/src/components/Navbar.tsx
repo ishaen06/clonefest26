@@ -60,20 +60,17 @@ export const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          {/* Desktop Nav: Highlighted Create Secret CTA */}
-          <nav className="hidden md:flex items-center space-x-1" aria-label="Main Navigation">
+          {/* Right Grouped Actions & Controls */}
+          <div className="flex items-center space-x-2.5">
+            {/* Create Secret CTA */}
             <Link
               to="/create"
               aria-label="Create New Secret"
-              className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/30 border border-blue-400/40 hover:border-blue-400/80 transition-all duration-200 hover:scale-[1.02] active:scale-95"
+              className="hidden sm:flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/25 border border-blue-400/40 transition-all duration-150 active:scale-95"
             >
               <PlusCircle className="w-4 h-4 text-white" />
               <span>{t.new_secret || 'Create Secret'}</span>
             </Link>
-          </nav>
-
-          {/* Right Controls */}
-          <div className="flex items-center space-x-2">
             {/* Why Us Button */}
             <button
               onClick={() => setShowWhyUsModal(true)}
