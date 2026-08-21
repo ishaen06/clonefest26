@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+let rawApiBase = (import.meta.env.VITE_API_URL || '/api').trim();
+if (rawApiBase.endsWith('/')) {
+  rawApiBase = rawApiBase.slice(0, -1);
+}
+if (rawApiBase.startsWith('http') && !rawApiBase.endsWith('/api')) {
+  rawApiBase = `${rawApiBase}/api`;
+}
+const API_BASE = rawApiBase;
 
 export const getDeviceFingerprint = (): string => {
   try {
@@ -17,6 +24,7 @@ export const getDeviceFingerprint = (): string => {
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
+  timeout: 60000, // 60s timeout for cloud server cold starts
   headers: {
     'Content-Type': 'application/json',
   },

@@ -63,6 +63,7 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api', secretRoutes);
+app.use('/', secretRoutes);
 
 // Static frontend serving in production
 const possiblePaths = [
