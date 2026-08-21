@@ -264,3 +264,4 @@ export const ManageSecret: React.FC = () => {
     </div>
   );
 };
+export default ManageSecret;

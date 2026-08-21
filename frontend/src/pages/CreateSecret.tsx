@@ -854,3 +854,5 @@ export const CreateSecret: React.FC = () => {
     </div>
   );
 };
+
+export default CreateSecret;

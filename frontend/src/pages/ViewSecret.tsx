@@ -665,3 +665,4 @@ export const ViewSecret: React.FC = () => {
     </div>
   );
 };
+export default ViewSecret;

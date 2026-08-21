@@ -5,16 +5,16 @@ import { InteractiveParticleBackground } from './components/InteractiveParticleB
 import { Navbar } from './components/Navbar';
 import { checkBackendHealth } from './api/client';
 
-// Code-split route bundles with React.lazy
-const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
-const CreateSecret = lazy(() => import('./pages/CreateSecret').then((m) => ({ default: m.CreateSecret })));
-const ViewSecret = lazy(() => import('./pages/ViewSecret').then((m) => ({ default: m.ViewSecret })));
-const ManageSecret = lazy(() => import('./pages/ManageSecret').then((m) => ({ default: m.ManageSecret })));
+// Lazy loaded page bundles
+const HomePage = lazy(() => import('./pages/HomePage'));
+const CreateSecret = lazy(() => import('./pages/CreateSecret'));
+const ViewSecret = lazy(() => import('./pages/ViewSecret'));
+const ManageSecret = lazy(() => import('./pages/ManageSecret'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[50vh] font-mono text-xs text-blue-400 space-x-2">
     <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
-    <span>Loading module...</span>
+    <span>Loading Jigsaw module...</span>
   </div>
 );
 
@@ -39,7 +39,10 @@ export function App() {
                   <Route path="/" element={<HomePage />} />
                   <Route path="/create" element={<CreateSecret />} />
                   <Route path="/new" element={<CreateSecret />} />
+                  <Route path="/secret" element={<Navigate to="/create" replace />} />
                   <Route path="/secret/:id" element={<ViewSecret />} />
+                  <Route path="/view" element={<Navigate to="/create" replace />} />
+                  <Route path="/view/:id" element={<ViewSecret />} />
                   <Route path="/manage" element={<ManageSecret />} />
                   <Route path="/manage/:id" element={<ManageSecret />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
