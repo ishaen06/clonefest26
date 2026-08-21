@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   ShieldCheck,
   PlusCircle,
-  Key,
   EyeOff,
   Zap,
   Globe,
@@ -48,7 +47,6 @@ export const Navbar: React.FC = () => {
 
   const navItems = [
     { path: '/create', label: t.new_secret || 'Create Secret', icon: PlusCircle },
-    { path: '/manage', label: t.manage || 'Manage', icon: Key },
   ];
 
   return (
