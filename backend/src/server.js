@@ -61,9 +61,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes — must be registered BEFORE static file middleware
 app.use('/api', secretRoutes);
-app.use('/', secretRoutes);
 
 // Static frontend serving in production
 const possiblePaths = [
@@ -78,7 +77,11 @@ const frontendDist = possiblePaths.find((p) => fs.existsSync(p));
 if (frontendDist) {
   console.log(`[Static] Serving frontend from: ${frontendDist}`);
   app.use(express.static(frontendDist));
+  // SPA fallback: only send index.html for non-API routes
   app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
     res.sendFile(path.join(frontendDist, 'index.html'));
   });
 } else {
