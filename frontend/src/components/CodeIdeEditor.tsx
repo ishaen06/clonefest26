@@ -95,6 +95,16 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
     const ta = textareaRef.current;
     if (!ta) return;
 
+    // Ctrl+Enter / Cmd+Enter: trigger encrypt submit
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const btn = document.getElementById('encrypt-submit-btn');
+      if (btn) {
+        btn.click();
+        return;
+      }
+    }
+
     // Tab / Shift+Tab handling
     if (e.key === 'Tab') {
       e.preventDefault();

@@ -833,6 +833,7 @@ export const CreateSecret: React.FC = () => {
       {/* Create Button */}
       <div className="flex items-center justify-end">
         <button
+          id="encrypt-submit-btn"
           onClick={handleCreate}
           disabled={isEncrypting}
           className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl font-mono text-xs font-semibold tracking-wide shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 transition active:scale-[0.98]"
