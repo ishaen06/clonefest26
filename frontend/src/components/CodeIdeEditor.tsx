@@ -21,8 +21,6 @@ import {
   Maximize2,
   Minimize2,
   Terminal,
-  Code2,
-  Eye,
 } from 'lucide-react';
 import {
   detectCodeLanguage,
@@ -55,13 +53,13 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
 }) => {
   const [autoDetect, setAutoDetect] = useState(true);
   const activeTheme = 'cyber';
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 });
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [detectedToast, setDetectedToast] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const preRef = useRef<HTMLPreElement | null>(null);
   const gutterRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-detect language on text change
@@ -99,9 +97,13 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
     return value ? value.split('\n') : [''];
   }, [value]);
 
-  // Synced scrolling between textarea and line gutter
-  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) => {
-    const { scrollTop } = e.currentTarget;
+  // Synced scrolling between textarea, highlighted pre, and line gutter
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    const { scrollTop, scrollLeft } = e.currentTarget;
+    if (preRef.current) {
+      preRef.current.scrollTop = scrollTop;
+      preRef.current.scrollLeft = scrollLeft;
+    }
     if (gutterRef.current) {
       gutterRef.current.scrollTop = scrollTop;
     }
@@ -165,7 +167,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
       }`}
       style={{ backgroundColor: currentThemeObj.bg }}
     >
-      {/* 1. IDE TOP TITLEBAR & TAB BAR */}
+      {/* 1. IDE TOP TITLEBAR */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-950/90 border-b border-zinc-800/80 flex-wrap gap-2 text-xs select-none">
         {/* Left: Window Dots & File Tab */}
         <div className="flex items-center space-x-3">
@@ -189,6 +191,12 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
               style={{ backgroundColor: activeLangInfo.color }}
             />
           </div>
+
+          {/* Live Highlight Indicator Badge */}
+          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Live Syntax Active</span>
+          </div>
         </div>
 
         {/* Center: Auto-detect badge notification */}
@@ -199,36 +207,8 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
           </div>
         )}
 
-        {/* Right: Controls (Language Selector, Theme, Tab View, Fullscreen) */}
+        {/* Right: Controls (Auto-Detect, Language Selector, Copy, Fullscreen) */}
         <div className="flex items-center space-x-2">
-          {/* Edit / Syntax Preview Mode Toggle */}
-          <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-0.5">
-            <button
-              type="button"
-              onClick={() => setActiveTab('editor')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center space-x-1 transition ${
-                activeTab === 'editor'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              <Code2 className="w-3 h-3" />
-              <span>Edit</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('preview')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center space-x-1 transition ${
-                activeTab === 'preview'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              <Eye className="w-3 h-3" />
-              <span>Highlight</span>
-            </button>
-          </div>
-
           {/* Auto-Detect Toggle */}
           <button
             type="button"
@@ -283,19 +263,15 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
         </div>
       </div>
 
-      {/* 2. EDITOR CANVAS */}
+      {/* 2. REAL-TIME LIVE SYNTAX HIGHLIGHTED EDITOR CANVAS */}
       <div
         className={`relative flex flex-1 overflow-hidden ${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-80'}`}
-        onClick={() => {
-          if (activeTab === 'editor' && textareaRef.current) {
-            textareaRef.current.focus();
-          }
-        }}
+        onClick={() => textareaRef.current?.focus()}
       >
         {/* Line Numbers Gutter */}
         <div
           ref={gutterRef}
-          className="select-none py-3 px-3 text-right text-zinc-600 text-xs border-r border-zinc-800/80 overflow-hidden font-mono"
+          className="select-none py-3 px-3 text-right text-zinc-600 text-xs border-r border-zinc-800/80 overflow-hidden font-mono flex-shrink-0"
           style={{
             backgroundColor: currentThemeObj.gutter,
             minWidth: '3.5rem',
@@ -315,56 +291,68 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
           ))}
         </div>
 
-        {/* Viewport: Direct Native Input or Themed Syntax Highlighting */}
+        {/* Real-time Overlay Viewport: Prism Highlighted Layer + Live Editable Transparent Textarea */}
         <div
           className={`relative flex-1 h-full overflow-hidden ${currentThemeObj.themeClass}`}
           style={{ backgroundColor: currentThemeObj.bg }}
         >
-          {activeTab === 'editor' ? (
-            <textarea
-              ref={textareaRef}
-              value={value}
-              onChange={(e) => {
-                onChange(e.target.value);
-                updateCursorPosition();
-              }}
-              onKeyUp={updateCursorPosition}
-              onClick={updateCursorPosition}
-              onScroll={handleScroll}
-              onKeyDown={handleKeyDown}
-              placeholder={placeholder}
-              spellCheck="false"
-              autoCapitalize="off"
-              autoComplete="off"
-              autoCorrect="off"
-              className="code-ide-textarea w-full h-full p-3 font-mono text-xs focus:outline-none resize-none whitespace-pre overflow-auto z-10 selection:bg-blue-600/40 selection:text-white"
+          {/* Layer 1 (Underlay): Real-Time Syntax Highlighting */}
+          <pre
+            ref={preRef}
+            aria-hidden="true"
+            className="absolute inset-0 m-0 p-3 font-mono text-xs overflow-hidden pointer-events-none select-none whitespace-pre"
+            style={{
+              fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace",
+              tabSize: 2,
+              lineHeight: '1.5rem',
+              letterSpacing: '0px',
+              border: 'none',
+              boxSizing: 'border-box',
+            }}
+          >
+            <code
+              className={`language-${language}`}
               style={{
-                backgroundColor: currentThemeObj.bg,
-                color: currentThemeObj.text,
-                fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace",
-                tabSize: 2,
                 lineHeight: '1.5rem',
-                caretColor: currentThemeObj.caret || '#38bdf8',
+                fontFamily: 'inherit',
+              }}
+              dangerouslySetInnerHTML={{
+                __html: value
+                  ? highlightedCode + (value.endsWith('\n') ? ' ' : '')
+                  : `<span class="text-zinc-600">${placeholder}</span>`,
               }}
             />
-          ) : (
-            <div
-              onScroll={handleScroll}
-              className="w-full h-full p-3 font-mono text-xs overflow-auto select-all cursor-text"
-              style={{ lineHeight: '1.5rem' }}
-              onClick={() => setActiveTab('editor')}
-            >
-              <pre className="m-0 p-0 bg-transparent whitespace-pre overflow-visible">
-                <code
-                  className={`language-${language}`}
-                  style={{ lineHeight: '1.5rem' }}
-                  dangerouslySetInnerHTML={{
-                    __html: highlightedCode || placeholder,
-                  }}
-                />
-              </pre>
-            </div>
-          )}
+          </pre>
+
+          {/* Layer 2 (Overlay): Live Transparent Interactive Textarea */}
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => {
+              onChange(e.target.value);
+              updateCursorPosition();
+            }}
+            onKeyUp={updateCursorPosition}
+            onClick={updateCursorPosition}
+            onScroll={handleScroll}
+            onKeyDown={handleKeyDown}
+            spellCheck="false"
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+            className="absolute inset-0 w-full h-full p-3 font-mono text-xs focus:outline-none resize-none whitespace-pre overflow-auto z-10 selection:bg-blue-600/40 selection:text-white"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'transparent',
+              fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace",
+              tabSize: 2,
+              lineHeight: '1.5rem',
+              letterSpacing: '0px',
+              caretColor: currentThemeObj.caret || '#38bdf8',
+              border: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
         </div>
       </div>
 
@@ -401,4 +389,5 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
     </div>
   );
 };
+
 export default CodeIdeEditor;
