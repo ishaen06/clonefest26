@@ -55,7 +55,7 @@ export const createSecret = async (req, res) => {
       secretId,
       ciphertext,
       iv,
-      salt: salt || null,
+      salt: salt || '',
       iterations: Number(iterations) || 600000,
       hasPassword: Boolean(hasPassword),
       hasDuress: Boolean(hasDuress),
@@ -65,11 +65,9 @@ export const createSecret = async (req, res) => {
       expiresAt,
       burnAfterReads: Number(burnAfterReads) || 0,
       ephemeralCountdownSeconds: Number(ephemeralCountdownSeconds) || 0,
-      enableComments: Boolean(enableComments),
       privacyLensDefault: Boolean(privacyLensDefault),
-      format,
-      syntaxLanguage,
-      singleDeviceLock: Boolean(singleDeviceLock),
+      format: format || 'plaintext',
+      syntaxLanguage: syntaxLanguage || 'plaintext',
     });
 
     await secret.save();
@@ -84,7 +82,7 @@ export const createSecret = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating secret:', error);
-    return res.status(500).json({ error: 'Failed to securely store secret.' });
+    return res.status(500).json({ error: 'Failed to securely store secret: ' + error.message });
   }
 };
 
@@ -114,7 +112,6 @@ export const getSecretMeta = async (req, res) => {
       readCount: secret.readCount,
       isBurned: secret.isBurned,
       ephemeralCountdownSeconds: secret.ephemeralCountdownSeconds,
-      enableComments: secret.enableComments,
       privacyLensDefault: secret.privacyLensDefault,
       format: secret.format,
       syntaxLanguage: secret.syntaxLanguage,
@@ -211,9 +208,8 @@ export const verifyDuress = async (req, res) => {
 
     const inputHash = sha256(id + ':' + duressPin);
     if (inputHash === secret.duressPinHash) {
-      // DURESS TRIGGERED: Obliterate secret and all comments from database immediately
+      // DURESS TRIGGERED: Obliterate secret from database immediately
       await Secret.deleteOne({ secretId: id });
-      await Comment.deleteMany({ secretId: id });
 
       console.warn(`[SECURITY ALERT] Duress Canary PIN triggered for Secret ${id}. Record permanently purged.`);
 
@@ -264,7 +260,6 @@ export const getManagementTelemetry = async (req, res) => {
       hasPassword: secret.hasPassword,
       hasDuress: secret.hasDuress,
       format: secret.format,
-      enableComments: secret.enableComments,
       ephemeralCountdownSeconds: secret.ephemeralCountdownSeconds,
     });
   } catch (error) {
