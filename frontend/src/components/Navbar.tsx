@@ -8,26 +8,29 @@ import {
   Zap,
   Globe,
   Settings,
+  HelpCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import { PanicOverlay } from './PanicOverlay';
 import { ConfigSettingsModal } from './ConfigSettingsModal';
+import { WhyUsModal } from './WhyUsModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const [panicActive, setPanicActive] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showWhyUsModal, setShowWhyUsModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Global Language Context
   const { currentLang, setLanguage, t } = useLanguage();
 
-  // Active Theme / Template
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
     return localStorage.getItem('jigsaw_theme') || 'theme-cyber';
   });
 
   useEffect(() => {
-    // Remove all theme classes and apply selected
     document.body.className = '';
     document.body.classList.add(currentTheme);
     localStorage.setItem('jigsaw_theme', currentTheme);
@@ -53,7 +56,7 @@ export const Navbar: React.FC = () => {
       <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Logo with Thunderbolt Icon */}
-          <Link to="/" className="flex items-center space-x-3 group" title="JigsawBin Home">
+          <Link to="/" className="flex items-center space-x-3 group" title="JigsawBin Home" aria-label="JigsawBin Home">
             <div className="w-10 h-10 rounded-xl jigsaw-logo-badge flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
               <Zap className="w-5 h-5 jigsaw-logo-icon" />
             </div>
@@ -64,8 +67,8 @@ export const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          {/* Nav items */}
-          <nav className="hidden md:flex items-center space-x-1">
+          {/* Desktop Nav items */}
+          <nav className="hidden md:flex items-center space-x-1" aria-label="Main Navigation">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -73,6 +76,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs font-mono transition ${
                     isActive
                       ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
@@ -88,9 +92,21 @@ export const Navbar: React.FC = () => {
 
           {/* Right Controls */}
           <div className="flex items-center space-x-2">
+            {/* Why Us Button */}
+            <button
+              onClick={() => setShowWhyUsModal(true)}
+              aria-label="Why JigsawBin vs PrivateBin comparison"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 border border-blue-500/40 text-blue-300 text-xs font-mono transition"
+              title="Why JigsawBin vs PrivateBin"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
+              <span className="hidden sm:inline font-bold">Why Us?</span>
+            </button>
+
             {/* Language & Settings / Theme Button */}
             <button
               onClick={() => setShowConfigModal(true)}
+              aria-label="Open settings, themes and languages"
               className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-mono transition"
               title="Settings, Themes & Languages"
             >
@@ -102,6 +118,7 @@ export const Navbar: React.FC = () => {
             {/* Panic Decoy Button */}
             <button
               onClick={() => setPanicActive(true)}
+              aria-label="Activate panic mask emergency decoy"
               title="Activate Panic Mask (Esc)"
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-400 text-xs font-mono transition"
             >
@@ -117,8 +134,47 @@ export const Navbar: React.FC = () => {
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Zero-Knowledge</span>
             </div>
+
+            {/* Mobile Hamburger Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+              className="md:hidden p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden px-4 pt-2 pb-4 border-t border-zinc-800 bg-zinc-950/95 font-mono text-xs space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition ${
+                    isActive ? 'bg-blue-600/20 text-blue-400' : 'text-zinc-300 hover:bg-zinc-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+            <button
+              onClick={() => { setShowWhyUsModal(true); setMobileMenuOpen(false); }}
+              className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-950/30 text-blue-300 text-left"
+            >
+              <HelpCircle className="w-4 h-4 text-blue-400" />
+              <span>Why JigsawBin vs PrivateBin?</span>
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Panic Decoy Screen */}
@@ -132,6 +188,12 @@ export const Navbar: React.FC = () => {
         onSelectTheme={setCurrentTheme}
         currentLang={currentLang}
         onSelectLang={setLanguage}
+      />
+
+      {/* Why Us Comparison Modal */}
+      <WhyUsModal
+        isOpen={showWhyUsModal}
+        onClose={() => setShowWhyUsModal(false)}
       />
     </>
   );

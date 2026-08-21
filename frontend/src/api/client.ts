@@ -35,6 +35,17 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Silent background pre-warm function on app load
+export const checkBackendHealth = async (): Promise<boolean> => {
+  try {
+    const healthUrl = API_BASE.replace(/\/api$/, '') + '/health';
+    await fetch(healthUrl, { method: 'GET', mode: 'cors' });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export interface SecretCreationData {
   ciphertext: string;
   iv: string;
@@ -74,11 +85,9 @@ export interface SecretData {
   readCount: number;
   isBurned: boolean;
   ephemeralCountdownSeconds: number;
-  enableComments: boolean;
   privacyLensDefault: boolean;
   format: 'plaintext' | 'code' | 'markdown' | 'file' | 'shamir';
   syntaxLanguage: string;
-  singleDeviceLock?: boolean;
   expiresAt: string;
   createdAt: string;
 }
@@ -91,37 +100,27 @@ export interface SecretMeta {
   burnAfterReads: number;
   readCount: number;
   ephemeralCountdownSeconds: number;
-  enableComments: boolean;
   privacyLensDefault: boolean;
   format: 'plaintext' | 'code' | 'markdown' | 'file' | 'shamir';
   syntaxLanguage: string;
-  singleDeviceLock?: boolean;
   expiresAt: string;
   createdAt: string;
   isBurned?: boolean;
 }
 
-export interface CommentData {
-  commentId: string;
-  ciphertext: string;
-  iv: string;
-  nicknameCiphertext?: string;
-  createdAt: string;
-}
-
 export interface TelemetryData {
   secretId: string;
   status: 'ACTIVE' | 'BURNED' | 'EXPIRED';
-  isActive: boolean;
-  isBurned: boolean;
-  burnedAt?: string;
   readCount: number;
   burnAfterReads: number;
-  ephemeralCountdownSeconds: number;
-  enableComments: boolean;
-  format: string;
-  expiresAt: string;
+  isBurned: boolean;
+  burnedAt?: string;
   createdAt: string;
+  expiresAt: string;
+  hasPassword: boolean;
+  hasDuress: boolean;
+  format: string;
+  ephemeralCountdownSeconds: number;
 }
 
 export const createSecretApi = async (data: SecretCreationData): Promise<SecretCreationResponse> => {

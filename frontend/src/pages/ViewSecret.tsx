@@ -44,6 +44,7 @@ import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import 'prismjs/components/prism-css';
 import { CountdownTimer } from '../components/CountdownTimer';
+import { ColdStartModal } from '../components/ColdStartModal';
 
 const CODE_THEMES: Record<string, { bg: string; text: string; border: string; themeClass: string }> = {
   cyber: { bg: 'bg-[#090d16]', text: 'text-blue-300', border: 'border-zinc-800', themeClass: 'ide-theme-cyber' },
@@ -260,6 +261,7 @@ export const ViewSecret: React.FC = () => {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center font-mono animate-fadeIn">
+        <ColdStartModal isLoading={true} message="Retrieving encrypted payload from zero-knowledge enclave..." />
         <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-sm text-zinc-400">Fetching zero-knowledge encrypted payload...</p>
       </div>

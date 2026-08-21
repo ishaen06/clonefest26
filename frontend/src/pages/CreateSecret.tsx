@@ -30,9 +30,22 @@ import { copySecureToClipboard } from '../utils/clipboard';
 import { QrModal } from '../components/QrModal';
 import { ShamirDistributorModal } from '../components/ShamirDistributorModal';
 import { CodeIdeEditor } from '../components/CodeIdeEditor';
+import { ColdStartModal } from '../components/ColdStartModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export const CreateSecret: React.FC = () => {
+  // Global shortcut Ctrl+Enter / Cmd+Enter
+  React.useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const btn = document.getElementById('encrypt-submit-btn');
+        if (btn) btn.click();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
   const { t } = useLanguage();
 
   const TTL_OPTIONS = [
@@ -386,6 +399,10 @@ export const CreateSecret: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-fadeIn">
+      <ColdStartModal
+        isLoading={isEncrypting}
+        message="Securing payload & storing in zero-knowledge enclave..."
+      />
       {/* Header Banner */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white font-mono tracking-tight flex items-center space-x-2">
