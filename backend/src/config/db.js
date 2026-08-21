@@ -1,15 +1,23 @@
 import mongoose from 'mongoose';
 
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  process.env.MONGO_URL ||
-  'mongodb://127.0.0.1:27017/cloakvault';
+const getCleanMongoUri = () => {
+  let uri = process.env.MONGO_URI || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/cloakvault';
+  if (typeof uri === 'string') {
+    uri = uri.trim().replace(/^["']|["']$/g, '');
+  }
+  return uri;
+};
 
 export const connectDB = async (retries = 5, delayMs = 3000) => {
+  const MONGO_URI = getCleanMongoUri();
+  const maskedUri = MONGO_URI.replace(/:([^:@]+)@/, ':****@');
+  console.log(`[MongoDB] Initiating connection to: ${maskedUri}`);
+
   for (let i = 1; i <= retries; i++) {
     try {
       const conn = await mongoose.connect(MONGO_URI, {
         serverSelectionTimeoutMS: 10000,
+        authSource: 'admin',
       });
       console.log(`[MongoDB] Connected successfully: ${conn.connection.host}/${conn.connection.name}`);
       return conn;
