@@ -13,7 +13,7 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
-import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-markup'; // HTML, XML, SVG
 import {
   Sparkles,
   Copy,
@@ -34,6 +34,15 @@ interface CodeIdeEditorProps {
   onLanguageChange: (lang: string) => void;
   placeholder?: string;
 }
+
+const escapeHtml = (str: string) => {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
 
 export const IDE_THEMES = [
   { id: 'cyber', label: 'Cyber Dark', bg: '#090d16', gutter: '#111827', text: '#e2e8f0', caret: '#38bdf8', themeClass: 'ide-theme-cyber' },
@@ -78,18 +87,28 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
     }
   }, [value, autoDetect, language, onLanguageChange]);
 
-  // Syntax highlighting with Prism
+  // Syntax highlighting with Prism + HTML Escaping
   const highlightedCode = useMemo(() => {
     if (!value) return '';
-    const prismLang =
-      Prism.languages[language] ||
-      Prism.languages.javascript ||
-      Prism.languages.plaintext;
-    try {
-      return Prism.highlight(value, prismLang, language);
-    } catch {
-      return value;
+    const langKey = (language || 'plaintext').toLowerCase();
+    const grammar =
+      Prism.languages[langKey] ||
+      (langKey === 'html' || langKey === 'xml' || langKey === 'svg' ? Prism.languages.markup : null) ||
+      (langKey === 'js' ? Prism.languages.javascript : null) ||
+      (langKey === 'ts' ? Prism.languages.typescript : null) ||
+      (langKey === 'py' ? Prism.languages.python : null) ||
+      (langKey === 'sh' ? Prism.languages.bash : null) ||
+      (langKey === 'yml' ? Prism.languages.yaml : null) ||
+      null;
+
+    if (grammar) {
+      try {
+        return Prism.highlight(value, grammar, langKey);
+      } catch {
+        return escapeHtml(value);
+      }
     }
+    return escapeHtml(value);
   }, [value, language]);
 
   // Total lines
@@ -308,6 +327,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
               letterSpacing: '0px',
               border: 'none',
               boxSizing: 'border-box',
+              color: currentThemeObj.text || '#e2e8f0',
             }}
           >
             <code
@@ -319,7 +339,7 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
               dangerouslySetInnerHTML={{
                 __html: value
                   ? highlightedCode + (value.endsWith('\n') ? ' ' : '')
-                  : `<span class="text-zinc-600">${placeholder}</span>`,
+                  : '',
               }}
             />
           </pre>
@@ -336,14 +356,16 @@ export const CodeIdeEditor: React.FC<CodeIdeEditorProps> = ({
             onClick={updateCursorPosition}
             onScroll={handleScroll}
             onKeyDown={handleKeyDown}
+            placeholder={placeholder}
             spellCheck="false"
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className="absolute inset-0 w-full h-full p-3 font-mono text-xs focus:outline-none resize-none whitespace-pre overflow-auto z-10 selection:bg-blue-600/40 selection:text-white"
+            className="absolute inset-0 w-full h-full p-3 font-mono text-xs focus:outline-none resize-none whitespace-pre overflow-auto z-10 placeholder-zinc-600 selection:bg-blue-600/40"
             style={{
               backgroundColor: 'transparent',
               color: 'transparent',
+              WebkitTextFillColor: 'transparent',
               fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace",
               tabSize: 2,
               lineHeight: '1.5rem',
