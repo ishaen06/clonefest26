@@ -1,4 +1,4 @@
-﻿# 🧩 JigsawBin - Zero-Knowledge Ephemeral Information Exchange
+# 🧩 JigsawBin - Zero-Knowledge Ephemeral Information Exchange
 
 > Modern, zero-knowledge encrypted pastebin, code IDE, and multi-vault file sharing platform with Shamir Key Splitting ($K$-of-$N$ Quorum), ephemeral countdown timers, and physical OpSec privacy filters.
 
