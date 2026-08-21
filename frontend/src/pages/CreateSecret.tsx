@@ -637,98 +637,88 @@ export const CreateSecret: React.FC = () => {
           </div>
         )}
 
-        {/* Shamir Settings Panel */}
-        {format === 'shamir' && (
-          <div className="shamir-card mt-4 p-5 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-4 font-mono text-xs shadow-sm">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <div className="flex items-center space-x-2 text-purple-300 font-semibold text-sm">
-                <Users className="w-4 h-4 text-purple-400" />
-                <span>Shamir's Multi-Party Quorum (K-of-N)</span>
+        {/* Shamir Settings Panel (Compact) */}
+        {format === "shamir" && (
+          <div className="shamir-card mt-3 p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 space-y-2.5 font-mono text-xs shadow-sm">
+            <div className="flex items-center justify-between flex-wrap gap-1.5">
+              <div className="flex items-center space-x-2 text-purple-300 font-semibold text-xs">
+                <Users className="w-3.5 h-3.5 text-purple-400" />
+                <span>Shamir Multi-Party Quorum (K-of-N)</span>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] border border-purple-500/30 font-bold">
-                Jigsaw Flagship Protocol
+              <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[9px] border border-purple-500/30 font-bold">
+                Flagship Protocol
               </span>
             </div>
-            <p className="text-zinc-400 text-[11px] leading-relaxed">
-              Splits the 256-bit encryption key into N independent cryptographic shares using polynomial interpolation over GF(2^8). No single trustee holds the master key. The secret can only be reconstructed when at least <strong className="text-purple-300">{shamirThreshold}</strong> trustees assemble their shares.
+            <p className="text-zinc-400 text-[10px] leading-snug">
+              Splits master key into N shares over GF(2^8). Reconstructed when at least <strong className="text-purple-300">{shamirThreshold} of {shamirTotal}</strong> trustees assemble their shares.
             </p>
-
-            {/* Quick Presets */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Quorum Architecture Presets:</span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { label: '2-of-3 Board', k: 2, n: 3 },
-                  { label: '3-of-5 Multi-Sig', k: 3, n: 5 },
-                  { label: '4-of-7 Recovery', k: 4, n: 7 },
-                  { label: '5-of-9 Enterprise', k: 5, n: 9 },
-                ].map((preset) => {
-                  const isPresetActive = shamirThreshold === preset.k && shamirTotal === preset.n;
-                  return (
-                    <button
-                      key={preset.label}
-                      type="button"
-                      onClick={() => {
-                        setShamirThreshold(preset.k);
-                        setShamirTotal(preset.n);
-                      }}
-                      className={`p-2 rounded-xl border text-center transition active:scale-95 ${
-                        isPresetActive
-                          ? 'bg-purple-600/30 border-purple-500 text-purple-200 font-bold shadow-md shadow-purple-500/20'
-                          : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-                      }`}
-                    >
-                      <span className="block text-xs font-bold text-white">{preset.label}</span>
-                      <span className="text-[10px] text-purple-400">{preset.k} of {preset.n} Trustees</span>
-                    </button>
-                  );
-                })}
-              </div>
+            {/* Presets */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[10px] text-zinc-400 font-bold mr-1">Presets:</span>
+              {[
+                { label: "2-of-3 Board", k: 2, n: 3 },
+                { label: "3-of-5 Multi-Sig", k: 3, n: 5 },
+                { label: "4-of-7 Recovery", k: 4, n: 7 },
+                { label: "5-of-9 Enterprise", k: 5, n: 9 },
+              ].map((preset) => {
+                const isPresetActive = shamirThreshold === preset.k && shamirTotal === preset.n;
+                return (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setShamirThreshold(preset.k);
+                      setShamirTotal(preset.n);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg border text-[10px] font-semibold transition active:scale-95 ${
+                      isPresetActive
+                        ? "bg-purple-600/30 border-purple-500 text-purple-200 font-bold shadow-sm"
+                        : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
             </div>
-
-            {/* Custom Sliders / Number Inputs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-purple-900/40">
-              <div>
-                <label className="block text-zinc-400 text-[11px] mb-1">
-                  Required Threshold (K shares to unlock):
-                </label>
+            {/* Inputs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-purple-900/30 text-[11px]">
+              <div className="flex items-center space-x-2">
+                <label className="text-zinc-400 text-[10px] whitespace-nowrap">Threshold (K):</label>
                 <input
                   type="number"
                   min={2}
                   max={shamirTotal}
                   value={shamirThreshold}
                   onChange={(e) => setShamirThreshold(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-zinc-200 text-xs focus:outline-none"
+                  className="w-16 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-0.5 text-zinc-200 text-xs text-center focus:outline-none"
                 />
+                <span className="text-zinc-500 text-[10px]">shares to unlock</span>
               </div>
-              <div>
-                <label className="block text-zinc-400 text-[11px] mb-1">
-                  Total Trustee Shares (N shares generated):
-                </label>
+              <div className="flex items-center space-x-2">
+                <label className="text-zinc-400 text-[10px] whitespace-nowrap">Total Shares (N):</label>
                 <input
                   type="number"
                   min={shamirThreshold}
                   max={10}
                   value={shamirTotal}
                   onChange={(e) => setShamirTotal(Number(e.target.value))}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-zinc-200 text-xs focus:outline-none"
+                  className="w-16 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-0.5 text-zinc-200 text-xs text-center focus:outline-none"
                 />
+                <span className="text-zinc-500 text-[10px]">trustees generated</span>
               </div>
             </div>
-
-            {/* Visual Trustee Representation */}
-            <div className="pt-2">
-              <span className="text-[10px] text-zinc-400 block mb-1.5 font-bold">Trustee Share Preview:</span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {Array.from({ length: shamirTotal }).map((_, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-purple-800/50 text-purple-300 text-[10px] flex items-center space-x-1"
-                  >
-                    <span>Trustee #{idx + 1}</span>
-                  </span>
-                ))}
-              </div>
+            {/* Preview */}
+            <div className="flex items-center flex-wrap gap-1 pt-1">
+              <span className="text-[9px] text-zinc-500 font-bold mr-1">Preview:</span>
+              {Array.from({ length: shamirTotal }).map((_, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 rounded bg-zinc-900 border border-purple-800/40 text-purple-300 text-[9px]"
+                >
+                  Trustee #{idx + 1}
+                </span>
+              ))}
             </div>
           </div>
         )}
