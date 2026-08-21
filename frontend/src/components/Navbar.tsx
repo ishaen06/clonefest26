@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   PlusCircle,
   EyeOff,
@@ -16,7 +16,6 @@ import { WhyUsModal } from './WhyUsModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export const Navbar: React.FC = () => {
-  const location = useLocation();
   const [panicActive, setPanicActive] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showWhyUsModal, setShowWhyUsModal] = useState(false);
@@ -44,9 +43,6 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const navItems = [
-    { path: '/create', label: t.new_secret || 'Create Secret', icon: PlusCircle },
-  ];
 
   return (
     <>
@@ -64,27 +60,16 @@ export const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          {/* Desktop Nav items */}
+          {/* Desktop Nav: Highlighted Create Secret CTA */}
           <nav className="hidden md:flex items-center space-x-1" aria-label="Main Navigation">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs font-mono transition ${
-                    isActive
-                      ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
+            <Link
+              to="/create"
+              aria-label="Create New Secret"
+              className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/30 border border-blue-400/40 hover:border-blue-400/80 transition-all duration-200 hover:scale-[1.02] active:scale-95"
+            >
+              <PlusCircle className="w-4 h-4 text-white" />
+              <span>{t.new_secret || 'Create Secret'}</span>
+            </Link>
           </nav>
 
           {/* Right Controls */}
@@ -140,23 +125,14 @@ export const Navbar: React.FC = () => {
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden px-4 pt-2 pb-4 border-t border-zinc-800 bg-zinc-950/95 font-mono text-xs space-y-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition ${
-                    isActive ? 'bg-blue-600/20 text-blue-400' : 'text-zinc-300 hover:bg-zinc-900'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
+            <Link
+              to="/create"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2 px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-bold transition shadow-md shadow-blue-600/20"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>{t.new_secret || 'Create Secret'}</span>
+            </Link>
             <button
               onClick={() => { setShowWhyUsModal(true); setMobileMenuOpen(false); }}
               className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-950/30 text-blue-300 text-left"
