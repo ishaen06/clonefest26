@@ -10,8 +10,6 @@ import {
   RefreshCw,
   AlertTriangle,
   Lock,
-  Shield,
-  HelpCircle,
   Sparkles,
   Zap,
   ArrowRight,
@@ -34,8 +32,7 @@ export const ManageSecret: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [revokedSuccess, setRevokedSuccess] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
-  const [showGuide, setShowGuide] = useState(true);
-
+  
   // Check for recently created secret in current session
   const [recentSecret, setRecentSecret] = useState<{ secretId: string; managementToken: string } | null>(null);
 
@@ -140,67 +137,6 @@ export const ManageSecret: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* 2. Visual Step-by-Step Guide Box */}
-      <div className="mb-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 sm:p-5 text-xs shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2 text-amber-400 font-bold text-sm">
-            <HelpCircle className="w-4 h-4" />
-            <span>How Sender Management Works</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowGuide(!showGuide)}
-            className="text-[11px] text-zinc-400 hover:text-zinc-200 underline"
-          >
-            {showGuide ? 'Hide Guide' : 'Show Guide'}
-          </button>
-        </div>
-
-        {showGuide && (
-          <div className="space-y-3 pt-1">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {/* Step 1 */}
-              <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/80 space-y-1.5">
-                <div className="flex items-center space-x-1.5 text-amber-400 font-bold text-[11px]">
-                  <span className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px]">1</span>
-                  <span>Creator-Only Token</span>
-                </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed">
-                  When you create a secret, JigsawBin generates a 48-character <strong>Management Token</strong> (and a direct 1-click URL).
-                </p>
-              </div>
-
-              {/* Step 2 */}
-              <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/80 space-y-1.5">
-                <div className="flex items-center space-x-1.5 text-blue-400 font-bold text-[11px]">
-                  <span className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px]">2</span>
-                  <span>Live Access Telemetry</span>
-                </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed">
-                  Track real-time read counts, remaining views, and expiration timestamps without exposing the plaintext secret.
-                </p>
-              </div>
-
-              {/* Step 3 */}
-              <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/80 space-y-1.5">
-                <div className="flex items-center space-x-1.5 text-rose-400 font-bold text-[11px]">
-                  <span className="w-4 h-4 rounded-full bg-rose-500/20 flex items-center justify-center text-[10px]">3</span>
-                  <span>Emergency Kill-Switch</span>
-                </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed">
-                  Revoke or permanently obliterate the secret from the database at any moment before the recipient views it.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2 text-[10px] text-zinc-400 pt-1">
-              <Shield className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-              <span>Zero-Knowledge Proof: The management token controls cloud retention only and cannot decrypt the underlying secret.</span>
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* 3. Quick-Fill Recent Secret Helper (If available) */}
       {recentSecret && !telemetry && !revokedSuccess && (
